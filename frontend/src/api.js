@@ -104,6 +104,35 @@ const api = {
       console.log(error);
     }
   },
+  async patchNotas(id, notas) {
+    try {
+      await fetchVoid(
+        `${BASE_URL}/${id}/notas`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(notas),
+        },
+        "Erro ao atualizar apenas as notas"
+      );
+      alert("Notas atualizadas com sucesso!");
+    } catch (error) {
+      alert("Erro ao atualizar as notas.");
+      console.error(error);
+    }
+  },
+  async buscaAlunoPorId(id) {
+    try {
+      return await fetchJson(
+        `${BASE_URL}/${id}`,
+        {},
+        `Erro ao buscar aluno com ID ${id}`
+      );
+    } catch (error) {
+      alert("Erro ao buscar aluno por ID.");
+      console.error(error);
+    }
+  },
 };
 
 export default api;
