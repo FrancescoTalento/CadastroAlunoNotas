@@ -1,6 +1,6 @@
 import "./style.css";
 import api from "./api.js";
-import ux from "./ux.js";
+import ux from "./ux/exibicao.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   carregaUx();

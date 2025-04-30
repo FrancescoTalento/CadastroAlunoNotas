@@ -1,62 +1,65 @@
-const endPoint = "http://localhost:5251/api/alunos";
+// src/api.js
+
+const BASE_URL = "http://localhost:5251/api/alunos";
+
+// Função genérica de fetch com tratamento de erro
+async function fetchJson(url, options = {}, errorMsg = "Erro na requisição") {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+    return await response.json();
+  } catch (error) {
+    console.error(`${errorMsg}:`, error);
+    throw error;
+  }
+}
 
 const api = {
-  async buscaAlunos() {
-    try {
-      const response = await fetch(endPoint);
-      if (!response.ok) throw new Error("Erro ao buscar alunos");
-
-      return await response.json();
-    } catch (error) {
-      console.log("Erro ao buscar alunos:" + error);
-    }
+  buscaAlunos() {
+    return fetchJson(BASE_URL, {}, "Erro ao buscar alunos");
   },
-  async buscaMediaNotasTurma() {
-    try {
-      const response = await fetch(`${endPoint}/MediaNota`);
-      if (!response.ok) throw new Error("Erro ao buscar média das disciplinas");
 
-      return await response.json();
-    } catch (error) {
-      console.log("Erro ao buscar média das disciplinas" + error);
-    }
+  buscaMediaNotasTurma() {
+    return fetchJson(
+      `${BASE_URL}/MediaNota`,
+      {},
+      "Erro ao buscar médias das disciplinas"
+    );
   },
-  async buscaAlunosAcimaDaMedia() {
-    try {
-      const response = await fetch(`${endPoint}/acimaMedia`);
-      if (!response.ok) throw new Error("Erro ao buscar alunos acima da media");
 
-      return await response.json();
-    } catch (error) {
-      console.log("Erro ao buscar alunos acima da media:" + error);
-    }
+  buscaAlunosAcimaDaMedia() {
+    return fetchJson(
+      `${BASE_URL}/acimaMedia`,
+      {},
+      "Erro ao buscar alunos acima da média"
+    );
   },
-  async buscaAlunosEmAtencao() {
-    try {
-      const response = await fetch(`${endPoint}/atencao`);
-      if (!response.ok) throw new Error("Erro ao buscar alunos em atencao");
 
-      return await response.json();
-    } catch (error) {
-      console.log("Error ao buscar Alunos em Atencao:" + error);
-    }
+  buscaAlunosEmAtencao() {
+    return fetchJson(
+      `${BASE_URL}/atencao`,
+      {},
+      "Erro ao buscar alunos em atenção"
+    );
   },
 
   async cadastraAluno(aluno) {
     try {
-      const response = await fetch(endPoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(aluno),
-      });
-      if (!response.ok) throw new Error("Erro no servidor");
+      const dados = await fetchJson(
+        BASE_URL,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(aluno),
+        },
+        "Erro ao cadastrar aluno"
+      );
 
-      const dados = await response.json();
-      alert("Aluno Adicionado com Sucesso");
+      alert("Aluno adicionado com sucesso!");
       return dados;
     } catch (error) {
-      alert("Erro ao Adicionar Aluno");
-      console.log("Error ao adicionar Aluno:" + error);
+      alert("Erro ao adicionar aluno.");
+      console.log(error)
     }
   },
 };
