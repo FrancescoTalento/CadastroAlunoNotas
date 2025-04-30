@@ -8,10 +8,29 @@ const api = {
 
       return await response.json();
     } catch (error) {
-        console.log("Erro ao buscar alunos:"+error)
+      console.log("Erro ao buscar alunos:" + error);
     }
   },
-  
+  async buscaMediaNotas() {
+    try {
+      const response = await fetch(`${endPoint}/MediaNota`);
+      if (!response.ok) throw new Error("Erro ao buscar média das disciplinas");
+
+      return await response.json();
+    } catch (error) {
+      console.log("Erro ao buscar média das disciplinas" + error);
+    }
+  },
+  async buscaAlunosEmAcimaDaMedia() {
+    try {
+      const response = await fetch(`${endPoint}/acimaMedia`);
+      if (!response.ok) throw new Error("Erro ao buscar alunos acima da media");
+
+      return await response.json();
+    } catch (error) {
+      console.log("Erro ao buscar alunos acima da media:" + error);
+    }
+  },
   async buscaAlunosEmAtencao() {
     try {
       const response = await fetch(`${endPoint}/atencao`);
