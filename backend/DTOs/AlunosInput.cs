@@ -1,4 +1,4 @@
-namespace backend.Models
+namespace backend.DTOs
 {
     public record AlunoInput(
         string Nome,
