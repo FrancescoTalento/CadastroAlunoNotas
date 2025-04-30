@@ -78,7 +78,13 @@ app.MapGet("/api/alunos", async (AppDbContext db) =>
         e.Id,
         e.Nome,
         e.Frequencia,
-        Media = Math.Round(e.Notas.Any() ? e.Notas.Average(n => (double)n.Valor) : 0, 2),
+        MediasPorDisciplina = e.Notas
+            .GroupBy(n => n.Disciplina)
+            .Select(g => new
+            {
+                Disciplina = g.Key,
+                Media = Math.Round(g.Average(n => (double)n.Valor), 2)
+            }),
         Notas = e.Notas.Select(n => new
         {
             n.Disciplina,
@@ -95,7 +101,7 @@ app.MapGet("/api/alunos/atencao", async (AppDbContext db) =>
 {
     var alunos = await db.Estudantes
         .Include(e => e.Notas)
-        .Where(e => e.Frequencia < 75)
+        .Where(e => e.Frequencia < 75m)
         .ToListAsync();
 
     var resultado = alunos.Select(e => new

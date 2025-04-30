@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace backend.Models
 {
     [Table("Notas")]
@@ -12,6 +13,7 @@ namespace backend.Models
 
         [Column("disciplina")]
         public string Disciplina { get; set; } = string.Empty;
+
 
         [Column("valor_nota")]
         public decimal Valor { get; set; }
