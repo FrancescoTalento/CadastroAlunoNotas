@@ -1,4 +1,4 @@
-// src/ux/componentes.js
+
 
 export function criaItemAluno(aluno) {
   const liAluno = document.createElement("li");
