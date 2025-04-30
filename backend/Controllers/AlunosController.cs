@@ -52,4 +52,17 @@ public class AlunosController : ControllerBase
         return sucesso ? NoContent() : NotFound();
     }
 
+    [HttpPatch("{id}/notas")]
+    public async Task<IActionResult> AtualizarNotas(int id, [FromBody] List<NotaInput> novasNotas)
+    {
+        var sucesso = await _service.AtualizarNotasAsync(id, novasNotas);
+        return sucesso ? NoContent() : NotFound();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> BuscarPorId(int id)
+    {
+        var aluno = await _service.BuscarPorIdAsync(id);
+        return aluno is not null ? Ok(aluno) : NotFound();
+    }
 }

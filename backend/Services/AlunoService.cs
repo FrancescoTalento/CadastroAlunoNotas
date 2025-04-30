@@ -160,5 +160,46 @@ public class AlunoService
         await _db.SaveChangesAsync();
         return true;
     }
+    public async Task<object?> BuscarPorIdAsync(int id)
+    {
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (aluno is null) return null;
+
+        return new
+        {
+            aluno.Id,
+            aluno.Nome,
+            aluno.Frequencia,
+            Notas = aluno.Notas.Select(n => new { n.Disciplina, n.Valor })
+        };
+    }
+        public async Task<bool> AtualizarNotasAsync(int id, List<NotaInput> novasNotas)
+    {
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (aluno == null)
+            return false;
+
+        foreach (var novaNota in novasNotas)
+        {
+            var nota = new Nota
+            {
+                Disciplina = novaNota.Disciplina,
+                Valor = novaNota.Valor,
+                EstudanteId = aluno.Id
+            };
+
+            _db.Notas.Add(nota);
+        }
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
 
 }
