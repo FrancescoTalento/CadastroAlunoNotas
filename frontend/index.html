@@ -14,7 +14,7 @@
       <form id="formularioAluno">
         <div>
           <label for="nome">Nome do aluno:</label>
-          <input type="text" id="nome" name="nome" required />
+          <input type="text" id="nome" name="nome" required   minlength="3" maxlength="50" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$" placeholder="Apenas letras"/>
         </div>
       
         <fieldset>
@@ -42,6 +42,75 @@
       <hr />
       
       <div id="resultados">
+        <section id="adicionarNotas">
+          <h2>Adicionar Notas</h2>
+          <form id="formularioNotas">
+            <div>
+              <p id="nova-notaNome">Adicionando Nota para</p>
+            </div>
+        
+            <fieldset>
+              <legend>Notas (0 a 10):</legend>
+              <label for="nova-nota1">Matemática:</label>
+              <input type="number" id="nova-nota1" required min="0" max="10" step="0.1" />
+        
+              <label for="nova-nota2">Português:</label>
+              <input type="number" id="nova-nota2" required min="0" max="10" step="0.1" />
+        
+              <label for="nova-nota3">História:</label>
+              <input type="number" id="nova-nota3" required min="0" max="10" step="0.1" />
+        
+              <label for="nova-nota4">Geografia:</label>
+              <input type="number" id="nova-nota4" required min="0" max="10" step="0.1" />
+        
+              <label for="nova-nota5">Ciências:</label>
+              <input type="number" id="nova-nota5" required min="0" max="10" step="0.1" />
+            </fieldset>
+        
+            <button class="btn-addNota" type="submit">Enviar Notas</button>
+            <button class="btn-cancela" type="reset">Cancelar</button>
+          </form>
+        </section>
+
+
+        <section id="edicaoAluno" class="hidden">
+          <h2>Edita Aluno</h2>
+          <form id="formularioEdicao">
+            <input type="hidden" id="edit-id" />
+        
+            <div>
+              <label for="edit-nome">Nome do aluno:</label>
+              <input type="text" data-edit-nome id="edit-nome" name="edit-nome" required minlength="3" maxlength="50" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$" placeholder="Digite um nome com apenas letras e espaços, entre 3 e 50 caracteres."/>
+            </div>
+        
+            <fieldset>
+              <legend>Notas (0 a 10):</legend>
+              <label for="edit-nota1">Matemática:</label>
+              <input type="number" data-edit-nota1 id="edit-nota1" min="0" max="10" step="0.1" required />
+        
+              <label for="edit-nota2">Português:</label>
+              <input type="number" data-edit-nota2 id="edit-nota2" min="0" max="10" step="0.1" required />
+        
+              <label for="edit-nota3">História:</label>
+              <input type="number"  data-edit-nota3 id="edit-nota3" min="0" max="10" step="0.1" required />
+        
+              <label for="edit-nota4">Geografia:</label>
+              <input type="number" data-edit-nota4 id="edit-nota4" min="0" max="10" step="0.1" required />
+        
+              <label for="edit-nota5">Ciências:</label>
+              <input type="number" data-edit-nota5 id="edit-nota5" min="0" max="10" step="0.1" required />
+            </fieldset>
+        
+            <div>
+              <label for="edit-frequencia">Frequência (%):</label>
+              <input type="number" data-edit-frequencia id="edit-frequencia" name="edit-frequencia" min="0" max="100" required />
+            </div>
+        
+            <button data-edit-submit id="btn_submitEdicao" type="button">Salvar Alterações</button>
+            <button data-edit-cancel id="btn_cancelaEdicao" type="reset">Cancelar Edicao</button>
+          </form>
+        </section>
+
         <section id="resultadoAluno">
           <h2>Resumo de cada Aluno</h2>
           <table id="tabela" border="1">
@@ -50,6 +119,7 @@
                 <th>Nome</th>
                 <th>Média</th>
                 <th>Frequência (%)</th>
+                <th>Opcoes</th>
               </tr>
             </thead>
             <tbody id="tabelaAluno">
@@ -72,7 +142,7 @@
           <p><strong>Alunos com frequência abaixo de 75%:</strong></p>
           <ul id="frequenciaBaixa"></ul>
         
-          <p><strong>Alunos com média acima da média da turma:</strong></p>
+          <p><strong>Alunos com média geral acima da média geral da turma:</strong></p>
           <ul id="mediaAlta"></ul>
         </section>
       </div>
