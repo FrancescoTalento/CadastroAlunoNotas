@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# .NET build folders
+bin/
+obj/
+
+# Visual Studio / VS Code / JetBrains
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# EF Core & configs
+appsettings.Development.json
+appsettings.Production.json
+*.db
+appsettings.*.json
+
+# User secrets 
+secrets.json
+
+# Migrations history 
+# Migrations/
