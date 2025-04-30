@@ -44,5 +44,12 @@ public class AlunosController : ControllerBase
         var sucesso = await _service.AtualizarAlunoAsync(id, input);
         return sucesso ? NoContent() : NotFound();
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletarAluno(int id)
+    {
+        var sucesso = await _service.DeletarAlunoAsync(id);
+        return sucesso ? NoContent() : NotFound();
+    }
 
 }

@@ -107,30 +107,45 @@ public class AlunoService
             }).ToListAsync();
     }
     public async Task<bool> AtualizarAlunoAsync(int id, AlunoInput input)
-{
-    var aluno = await _db.Estudantes
-        .Include(e => e.Notas)
-        .FirstOrDefaultAsync(e => e.Id == id);
-
-    if (aluno == null)
-        return false;
-
-    aluno.Nome = input.Nome;
-    aluno.Frequencia = input.Frequencia;
-
-    // Remove as notas antigas
-    _db.Notas.RemoveRange(aluno.Notas);
-
-    // Adiciona as novas
-    aluno.Notas = input.Notas.Select(n => new Nota
     {
-        Disciplina = n.Disciplina,
-        Valor = n.Valor,
-        EstudanteId = aluno.Id
-    }).ToList();
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == id);
 
-    await _db.SaveChangesAsync();
-    return true;
-}
+        if (aluno == null)
+            return false;
+
+        aluno.Nome = input.Nome;
+        aluno.Frequencia = input.Frequencia;
+
+        // Remove as notas antigas
+        _db.Notas.RemoveRange(aluno.Notas);
+
+        // Adiciona as novas
+        aluno.Notas = input.Notas.Select(n => new Nota
+        {
+            Disciplina = n.Disciplina,
+            Valor = n.Valor,
+            EstudanteId = aluno.Id
+        }).ToList();
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> DeletarAlunoAsync(int id)
+    {
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (aluno == null)
+            return false;
+
+        _db.Notas.RemoveRange(aluno.Notas);
+        _db.Estudantes.Remove(aluno);
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
 
 }
