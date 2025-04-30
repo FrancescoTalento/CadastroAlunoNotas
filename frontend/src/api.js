@@ -1,8 +1,8 @@
-// src/api.js
+
 
 const BASE_URL = "http://localhost:5251/api/alunos";
 
-// Função genérica de fetch com tratamento de erro
+// Funcao generica de fetch com tratamento de erro
 async function fetchJson(url, options = {}, errorMsg = "Erro na requisição") {
   try {
     const response = await fetch(url, options);
