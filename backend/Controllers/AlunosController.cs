@@ -37,4 +37,12 @@ public class AlunosController : ControllerBase
     [HttpGet("MediaNota")]
     public async Task<IActionResult> MediaPorDisciplina()
         => Ok(await _service.CalcularMediaPorDisciplinaAsync());
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> AtualizarAluno(int id, [FromBody] AlunoInput input)
+    {
+        var sucesso = await _service.AtualizarAlunoAsync(id, input);
+        return sucesso ? NoContent() : NotFound();
+    }
+
 }

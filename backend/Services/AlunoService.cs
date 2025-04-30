@@ -106,4 +106,31 @@ public class AlunoService
                 Media = Math.Round(g.Average(n => (double)n.Valor), 2)
             }).ToListAsync();
     }
+    public async Task<bool> AtualizarAlunoAsync(int id, AlunoInput input)
+{
+    var aluno = await _db.Estudantes
+        .Include(e => e.Notas)
+        .FirstOrDefaultAsync(e => e.Id == id);
+
+    if (aluno == null)
+        return false;
+
+    aluno.Nome = input.Nome;
+    aluno.Frequencia = input.Frequencia;
+
+    // Remove as notas antigas
+    _db.Notas.RemoveRange(aluno.Notas);
+
+    // Adiciona as novas
+    aluno.Notas = input.Notas.Select(n => new Nota
+    {
+        Disciplina = n.Disciplina,
+        Valor = n.Valor,
+        EstudanteId = aluno.Id
+    }).ToList();
+
+    await _db.SaveChangesAsync();
+    return true;
+}
+
 }
