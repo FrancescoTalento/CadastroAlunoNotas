@@ -96,16 +96,29 @@ public class AlunoService
             });
     }
 
-    public async Task<IEnumerable<object>> CalcularMediaPorDisciplinaAsync()
+        public async Task<IEnumerable<object>> CalcularMediaPorDisciplinaAsync()
     {
-        return await _db.Notas
+        var mediasPorDisciplina = await _db.Notas
             .GroupBy(n => n.Disciplina)
             .Select(g => new
             {
                 Disciplina = g.Key,
                 Media = Math.Round(g.Average(n => (double)n.Valor), 2)
-            }).ToListAsync();
+            })
+            .ToListAsync();
+
+        var mediaGeral = await _db.Notas
+            .AverageAsync(n => (double)n.Valor);
+
+        mediasPorDisciplina.Add(new
+        {
+            Disciplina = "Média Geral",
+            Media = Math.Round(mediaGeral, 2)
+        });
+
+        return mediasPorDisciplina;
     }
+
     public async Task<bool> AtualizarAlunoAsync(int id, AlunoInput input)
     {
         var aluno = await _db.Estudantes
