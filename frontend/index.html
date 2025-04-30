@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="" />
@@ -42,7 +42,7 @@
       <hr />
       
       <div id="resultados">
-        <section id="adicionarNotas">
+        <section id="adicionarNotas" class="hidden">
           <h2>Adicionar Notas</h2>
           <form id="formularioNotas">
             <div>
@@ -82,32 +82,42 @@
               <label for="edit-nome">Nome do aluno:</label>
               <input type="text" data-edit-nome id="edit-nome" name="edit-nome" required minlength="3" maxlength="50" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$" placeholder="Digite um nome com apenas letras e espaços, entre 3 e 50 caracteres."/>
             </div>
-        
-            <fieldset>
-              <legend>Notas (0 a 10):</legend>
-              <label for="edit-nota1">Matemática:</label>
-              <input type="number" data-edit-nota1 id="edit-nota1" min="0" max="10" step="0.1" required />
-        
-              <label for="edit-nota2">Português:</label>
-              <input type="number" data-edit-nota2 id="edit-nota2" min="0" max="10" step="0.1" required />
-        
-              <label for="edit-nota3">História:</label>
-              <input type="number"  data-edit-nota3 id="edit-nota3" min="0" max="10" step="0.1" required />
-        
-              <label for="edit-nota4">Geografia:</label>
-              <input type="number" data-edit-nota4 id="edit-nota4" min="0" max="10" step="0.1" required />
-        
-              <label for="edit-nota5">Ciências:</label>
-              <input type="number" data-edit-nota5 id="edit-nota5" min="0" max="10" step="0.1" required />
-            </fieldset>
-        
             <div>
               <label for="edit-frequencia">Frequência (%):</label>
               <input type="number" data-edit-frequencia id="edit-frequencia" name="edit-frequencia" min="0" max="100" required />
             </div>
         
-            <button data-edit-submit id="btn_submitEdicao" type="button">Salvar Alterações</button>
-            <button data-edit-cancel id="btn_cancelaEdicao" type="reset">Cancelar Edicao</button>
+            <fieldset>
+              <legend>Matemática</legend>
+              <div class="notas-container" data-disc="Matemática"></div>
+            </fieldset>
+            
+            
+            <fieldset>
+              <legend>Português</legend>
+              <div class="notas-container" data-disc="Português"></div>
+            </fieldset>
+
+
+            <fieldset>
+              <legend>História</legend>
+              <div class="notas-container" data-disc="História"></div>
+            </fieldset>
+            
+            <fieldset>
+              <legend>Geografia</legend>
+              <div class="notas-container" data-disc="Geografia"></div>
+            </fieldset>
+            
+            <fieldset>
+              <legend>Ciências</legend>
+              <div class="notas-container" data-disc="Ciências"></div>
+            </fieldset>
+            
+            
+            
+            <button class="btn" type="submit">Salvar Alteracoes</button>
+            <button class=".btn-cancela btn" type="reset">Cancelar</button>
           </form>
         </section>
 

@@ -28,7 +28,7 @@ h1 {
   justify-content: space-evenly;
 }
 
-#btn_submit, .btn-excluir, .btn-editar, #btn_submitEdicao, #btn_cancelaEdicao,.btn-addNota,.btn-cancela{
+#btn_submit, .btn-excluir, .btn-editar, #btn_submitEdicao, #btn_cancelaEdicao,.btn-addNota,.btn-cancela,.btn{
   background-color: #242424;
   color: white;
   cursor: pointer;
