@@ -5,6 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registra Notas Estudante App</title>
+    <link rel="stylesheet" href="./src/style.css">
   </head>
   <body>
     <h1>Notas e Frequências</h1>
@@ -18,16 +19,16 @@
       
         <fieldset>
           <legend>Notas (0 a 10):</legend>
-          <label for="nota1">Nota 1:</label>
-          <input type="number" data-nota id="nota1" name="nota1" min="0" max="10" required />
-          <label for="nota2">Nota 2:</label>
-          <input type="number" data-nota id="nota2" name="nota2" min="0" max="10" required />
-          <label for="nota3">Nota 3:</label>
-          <input type="number" data-nota id="nota3" name="nota3" min="0" max="10" required />
-          <label for="nota4">Nota 4:</label>
-          <input type="number" data-nota id="nota4" name="nota4" min="0" max="10" required />
-          <label for="nota5">Nota 5:</label>
-          <input type="number" data-nota id="nota5" name="nota5" min="0" max="10" required />
+          <label for="nota1">Matematica Nota:</label>
+          <input type="number" data-nota id="nota1" name="nota1" min="0" max="10" required step="0.1" />
+          <label for="nota2">Potugues Nota:</label>
+          <input type="number" data-nota id="nota2" name="nota2" min="0" max="10" required step="0.1"/>
+          <label for="nota3">Historia Nota:</label>
+          <input type="number" data-nota id="nota3" name="nota3" min="0" max="10" required step="0.1"/>
+          <label for="nota4">Geografia Nota:</label>
+          <input type="number" data-nota id="nota4" name="nota4" min="0" max="10" required step="0.1"/>
+          <label for="nota5">Ciencias Nota:</label>
+          <input type="number" data-nota id="nota5" name="nota5" min="0" max="10" required step="0.1"/>
         </fieldset>
       
         <div>
@@ -35,7 +36,7 @@
           <input type="number" id="frequencia" name="frequencia" min="0" max="100" required />
         </div>
       
-        <button type="submit">Cadastrar</button>
+        <button id="btn_submit" type="submit">Cadastrar</button>
       </form>
       
       <hr />
@@ -43,7 +44,7 @@
       <div id="resultados">
         <section id="resultadoAluno">
           <h2>Resumo de cada Aluno</h2>
-          <table border="1">
+          <table id="tabela" border="1">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -52,25 +53,27 @@
               </tr>
             </thead>
             <tbody id="tabelaAluno">
-              <tr>
+              <!-- <tr>
                 <td>Francesco</td>
                 <td> 9.5</td>
                 <td>50%</td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </section>
         
         <section id="resultadoTurma">
           <h2>Resumo da Turma</h2>
+
+          <p><strong>Media da Turma por Disciplina:</strong>
           <ul id="mediaPorDisciplina">
-            <!-- JS vai preencher -->
+            
           </ul>
           <p><strong>Alunos com frequência abaixo de 75%:</strong></p>
           <ul id="frequenciaBaixa"></ul>
         
-          <p><strong>Alunos com média abaixo da média da turma:</strong></p>
-          <ul id="mediaBaixa"></ul>
+          <p><strong>Alunos com média acima da média da turma:</strong></p>
+          <ul id="mediaAlta"></ul>
         </section>
       </div>
 

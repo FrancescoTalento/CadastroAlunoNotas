@@ -13,9 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-/* body {} */
-  
+ 
+.hidden{
+  display: none;
+}  
 
 h1 {
   font-size: 3.2em;
@@ -27,3 +28,7 @@ h1 {
   justify-content: space-evenly;
 }
 
+#btn_submit{
+  background-color: #242424;
+  color: white;
+}

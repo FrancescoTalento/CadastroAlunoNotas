@@ -11,7 +11,7 @@ const api = {
       console.log("Erro ao buscar alunos:" + error);
     }
   },
-  async buscaMediaNotas() {
+  async buscaMediaNotasTurma() {
     try {
       const response = await fetch(`${endPoint}/MediaNota`);
       if (!response.ok) throw new Error("Erro ao buscar média das disciplinas");
@@ -21,7 +21,7 @@ const api = {
       console.log("Erro ao buscar média das disciplinas" + error);
     }
   },
-  async buscaAlunosEmAcimaDaMedia() {
+  async buscaAlunosAcimaDaMedia() {
     try {
       const response = await fetch(`${endPoint}/acimaMedia`);
       if (!response.ok) throw new Error("Erro ao buscar alunos acima da media");
