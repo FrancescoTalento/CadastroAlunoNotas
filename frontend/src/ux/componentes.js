@@ -1,21 +1,21 @@
 import interacoesUx from "./interacoes.js";
 
-export function criaItemAluno(aluno,type=null) {
+export function criaItemAluno(aluno, type = null) {
   const liAluno = document.createElement("li");
-  liAluno.textContent = aluno.nome;
-  if(type=== null){
-    return liAluno;
-  }else if(type === "frequencia"){
-    liAluno.textContent+= `: ${aluno.frequencia}% de frequencia`
-    return liAluno
-  }else if(type==="media"){
-    console.log(aluno)
-      liAluno.textContent += `: ${aluno.mediaAluno} de media geral`;
-      return liAluno;
+
+  switch (type) {
+    case "frequencia":
+      liAluno.textContent = `${aluno.nome}: ${aluno.frequencia}% de frequência`;
+      break;
+    case "media":
+      liAluno.textContent = `${aluno.nome}: ${aluno.mediaAluno} de média geral`;
+      break;
+    default:
+      liAluno.textContent = aluno.nome;
   }
+
+  return liAluno;
 }
-
-
 
 export function criaTrAluno(aluno) {
   const tr = document.createElement("tr");
@@ -32,30 +32,28 @@ export function criaTrAluno(aluno) {
   tdFreq.textContent = aluno.frequencia + "%";
 
   const tdAcoes = document.createElement("td");
-  const btnExcluir = document.createElement("button");
-  btnExcluir.textContent = "Excluir";
-  btnExcluir.classList.add("btn-excluir");
-  btnExcluir.addEventListener("click", () =>
+  const btnExcluir = criaBotao("Excluir", "btn-excluir", () =>
     interacoesUx.removerAluno(aluno.id)
   );
-
-  const btnEditar = document.createElement("button");
-  btnEditar.textContent = "Editar";
-  btnEditar.classList.add("btn-editar");
-  btnEditar.addEventListener("click", () =>
+  const btnEditar = criaBotao("Editar", "btn-editar", () =>
     interacoesUx.editaAluno(aluno.id, aluno)
   );
-  const btnAddNota = document.createElement("button");
-  btnAddNota.textContent = "AddNota";
-  btnAddNota.classList.add("btn-addNota");
-  btnAddNota.addEventListener("click", () =>
-    interacoesUx.adicionarNota(aluno.id, aluno)
+  const btnAddNota = criaBotao("AddNota", "btn-addNota", () =>
+    interacoesUx.adicionarNota(aluno.id,aluno)
   );
 
   tdAcoes.appendChild(btnExcluir);
   tdAcoes.appendChild(btnEditar);
   tdAcoes.appendChild(btnAddNota);
-  
+
   tr.append(tdNome, tdMedia, tdFreq, tdAcoes);
   return tr;
+}
+
+function criaBotao(texto, classe, onClick) {
+  const btn = document.createElement("button");
+  btn.textContent = texto;
+  btn.classList.add(classe);
+  btn.addEventListener("click", onClick);
+  return btn;
 }
