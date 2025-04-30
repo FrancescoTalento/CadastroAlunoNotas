@@ -46,7 +46,7 @@ app.MapPost("/api/alunos", async (AlunoInput input, backend.Data.AppDbContext db
         Notas = input.Notas.Select(n => new Nota
         {
             Disciplina = n.Disciplina,
-            Valor = n.Valor, 2 
+            Valor = n.Valor
         }).ToList()
     };
 
