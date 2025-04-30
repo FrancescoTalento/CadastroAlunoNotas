@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registra Notas Estudante App</title>
+  </head>
+  <body>
+    <h1>Notas e Frequências</h1>
+      <h1>Cadastro de Aluno</h1>
+      
+      <form id="formularioAluno">
+        <div>
+          <label for="nome">Nome do aluno:</label>
+          <input type="text" id="nome" name="nome" required />
+        </div>
+      
+        <fieldset>
+          <legend>Notas (0 a 10):</legend>
+          <label for="nota1">Nota 1:</label>
+          <input type="number" data-nota id="nota1" name="nota1" min="0" max="10" required />
+          <label for="nota2">Nota 2:</label>
+          <input type="number" data-nota id="nota2" name="nota2" min="0" max="10" required />
+          <label for="nota3">Nota 3:</label>
+          <input type="number" data-nota id="nota3" name="nota3" min="0" max="10" required />
+          <label for="nota4">Nota 4:</label>
+          <input type="number" data-nota id="nota4" name="nota4" min="0" max="10" required />
+          <label for="nota5">Nota 5:</label>
+          <input type="number" data-nota id="nota5" name="nota5" min="0" max="10" required />
+        </fieldset>
+      
+        <div>
+          <label for="frequencia">Frequência (%):</label>
+          <input type="number" id="frequencia" name="frequencia" min="0" max="100" required />
+        </div>
+      
+        <button type="submit">Cadastrar</button>
+      </form>
+      
+      <hr />
+      
+      <div id="resultados">
+        <section id="resultadoAluno">
+          <h2>Resumo de cada Aluno</h2>
+          <table border="1">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Média</th>
+                <th>Frequência (%)</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaAluno">
+              <tr>
+                <td>Francesco</td>
+                <td> 9.5</td>
+                <td>50%</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        
+        <section id="resultadoTurma">
+          <h2>Resumo da Turma</h2>
+          <ul id="mediaPorDisciplina">
+            <!-- JS vai preencher -->
+          </ul>
+          <p><strong>Alunos com frequência abaixo de 75%:</strong></p>
+          <ul id="frequenciaBaixa"></ul>
+        
+          <p><strong>Alunos com média abaixo da média da turma:</strong></p>
+          <ul id="mediaBaixa"></ul>
+        </section>
+      </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
