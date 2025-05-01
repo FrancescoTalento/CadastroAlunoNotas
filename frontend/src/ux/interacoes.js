@@ -16,7 +16,8 @@ const interacoesUx = {
     await api.deletaAluno(id);
     await ux.mostraTodosAlunos();
   },
-  async editaAluno(id, aluno) {
+  async editaAluno(id) {
+    const aluno = await api.buscaAlunoPorId(id)
     preencherFormularioDeEdicao(aluno);
 
     const form = document.querySelector("#formularioEdicao");

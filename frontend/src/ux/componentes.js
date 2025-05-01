@@ -52,7 +52,7 @@ export function criaTrAluno(aluno) {
     interacoesUx.removerAluno(aluno.id)
   );
   const btnEditar = criaBotao("Editar", "btn-editar", () =>
-    interacoesUx.editaAluno(aluno.id, aluno)
+    interacoesUx.editaAluno(aluno.id)
   );
   const btnAddNota = criaBotao("AddNota", "btn-addNota", () =>
     interacoesUx.adicionarNota(aluno.id,aluno)
