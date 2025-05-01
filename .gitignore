@@ -32,7 +32,8 @@ obj/
 appsettings.Development.json
 appsettings.Production.json
 *.db
-appsettings.*.json
+
+
 
 # User secrets 
 secrets.json
