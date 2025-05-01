@@ -133,19 +133,6 @@ const api = {
       console.error(error);
     }
   },
-  // ...
-  async buscaAlunoPorId(id) {
-    try {
-      return await fetchJson(
-        `${BASE_URL}/${id}`,
-        {},
-        `Erro ao buscar aluno com ID ${id}`
-      );
-    } catch (error) {
-      alert("Erro ao buscar aluno por ID.");
-      console.error(error);
-    }
-  },
   buscaDisciplinas() {
     return fetchJson(
       "http://localhost:5251/api/disciplinas",
