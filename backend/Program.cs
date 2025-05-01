@@ -4,6 +4,7 @@ using backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -30,7 +31,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
     DbSeeder.SeedDisciplinas(db); 
 }
-
+app.UseGlobalErrorHandling();
 app.UseCors();
 app.UseHttpsRedirection();
 app.MapControllers();
