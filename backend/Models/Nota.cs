@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace backend.Models
 {
     [Table("Notas")]
@@ -11,10 +10,6 @@ namespace backend.Models
         [Column("id_nota")]
         public int Id { get; set; }
 
-        [Column("disciplina")]
-        public string Disciplina { get; set; } = string.Empty;
-
-
         [Column("valor_nota")]
         public decimal Valor { get; set; }
 
@@ -22,5 +17,10 @@ namespace backend.Models
         public int EstudanteId { get; set; }
 
         public Estudante? Estudante { get; set; }
+
+        [Column("id_disciplina")]
+        public int DisciplinaId { get; set; }  
+
+        public Disciplina? Disciplina { get; set; } 
     }
 }

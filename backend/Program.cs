@@ -1,8 +1,8 @@
 using backend.Data;
 using backend.Services;
+using backend.Helpers; // 👈 IMPORTANTE
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure; // Para ServerVersion
-
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +28,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+    DbSeeder.SeedDisciplinas(db); 
 }
 
 app.UseCors();

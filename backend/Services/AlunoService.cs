@@ -15,43 +15,50 @@ public class AlunoService
     }
 
     public async Task<AlunoOutput> CriarAlunoAsync(AlunoInput input)
-{
-    var estudante = new Estudante
     {
-        Nome = input.Nome,
-        Frequencia = input.Frequencia,
-        Notas = input.Notas.Select(n => new Nota
+        var estudante = new Estudante
         {
-            Disciplina = n.Disciplina,
-            Valor = n.Valor
-        }).ToList()
-    };
+            Nome = input.Nome,
+            Frequencia = input.Frequencia,
+            Notas = input.Notas.Select(n => new Nota
+            {
+                DisciplinaId = n.DisciplinaId,
+                Valor = n.Valor
+            }).ToList()
+        };
 
-    _db.Estudantes.Add(estudante);
-    await _db.SaveChangesAsync();
+        _db.Estudantes.Add(estudante);
+        await _db.SaveChangesAsync();
 
-    var media = Math.Round(estudante.Notas.Average(n => (double)n.Valor), 2);
+        var media = Math.Round(estudante.Notas.Average(n => (double)n.Valor), 2);
 
-    return new AlunoOutput(
-        estudante.Id,
-        estudante.Nome,
-        estudante.Frequencia,
-        media
-    );
-}
+        return new AlunoOutput(estudante.Id, estudante.Nome, estudante.Frequencia, media);
+    }
 
     public async Task<IEnumerable<object>> BuscarTodosAsync()
     {
-        var alunos = await _db.Estudantes.Include(e => e.Notas).ToListAsync();
+        var alunos = await _db.Estudantes
+            .Include(e => e.Notas)
+                .ThenInclude(n => n.Disciplina)
+            .ToListAsync();
 
         return alunos.Select(e => new
         {
             e.Id,
             e.Nome,
             e.Frequencia,
-            MediasPorDisciplina = e.Notas.GroupBy(n => n.Disciplina)
-                .Select(g => new { Disciplina = g.Key, Media = Math.Round(g.Average(n => (double)n.Valor), 2) }),
-            Notas = e.Notas.Select(n => new { n.Disciplina, n.Valor })
+            MediasPorDisciplina = e.Notas
+                .GroupBy(n => n.Disciplina.Nome)
+                .Select(g => new
+                {
+                    Disciplina = g.Key,
+                    Media = Math.Round(g.Average(n => (double)n.Valor), 2)
+                }),
+            Notas = e.Notas.Select(n => new
+            {
+                Disciplina = n.Disciplina.Nome,
+                n.Valor
+            })
         });
     }
 
@@ -59,6 +66,7 @@ public class AlunoService
     {
         var alunos = await _db.Estudantes
             .Include(e => e.Notas)
+                .ThenInclude(n => n.Disciplina)
             .Where(e => e.Frequencia < 75m)
             .ToListAsync();
 
@@ -68,13 +76,20 @@ public class AlunoService
             e.Nome,
             e.Frequencia,
             MediaAluno = Math.Round(e.Notas.Any() ? e.Notas.Average(n => (double)n.Valor) : 0, 2),
-            Notas = e.Notas.Select(n => new { n.Disciplina, n.Valor })
+            Notas = e.Notas.Select(n => new
+            {
+                Disciplina = n.Disciplina.Nome,
+                n.Valor
+            })
         });
     }
 
     public async Task<IEnumerable<object>> BuscarAcimaDaMediaAsync()
     {
-        var alunos = await _db.Estudantes.Include(e => e.Notas).ToListAsync();
+        var alunos = await _db.Estudantes
+            .Include(e => e.Notas)
+                .ThenInclude(n => n.Disciplina)
+            .ToListAsync();
 
         if (!alunos.Any() || alunos.All(e => !e.Notas.Any()))
             return new List<object>();
@@ -92,32 +107,45 @@ public class AlunoService
                 e.Frequencia,
                 MediaAluno = Math.Round(e.Notas.Average(n => (double)n.Valor), 2),
                 MediaTurma = Math.Round(mediaTurma, 2),
-                Notas = e.Notas.Select(n => new { n.Disciplina, n.Valor })
+                Notas = e.Notas.Select(n => new
+                {
+                    Disciplina = n.Disciplina.Nome,
+                    n.Valor
+                })
             });
     }
 
-        public async Task<IEnumerable<object>> CalcularMediaPorDisciplinaAsync()
+   public async Task<IEnumerable<object>> CalcularMediaPorDisciplinaAsync()
     {
-        var mediasPorDisciplina = await _db.Notas
-            .GroupBy(n => n.Disciplina)
+        var notas = await _db.Notas
+            .Include(n => n.Disciplina)
+            .Where(n => n.Disciplina != null) // segurança extra
+            .ToListAsync();
+
+        if (!notas.Any())
+            return new List<object>();
+
+        var mediasPorDisciplina = notas
+            .GroupBy(n => n.Disciplina!.Nome)
             .Select(g => new
             {
                 Disciplina = g.Key,
                 Media = Math.Round(g.Average(n => (double)n.Valor), 2)
             })
-            .ToListAsync();
+            .ToList();
 
-        var mediaGeral = await _db.Notas
-            .AverageAsync(n => (double)n.Valor);
+        var mediaGeral = Math.Round(notas.Average(n => (double)n.Valor), 2);
 
         mediasPorDisciplina.Add(new
         {
             Disciplina = "Média Geral",
-            Media = Math.Round(mediaGeral, 2)
+            Media = mediaGeral
         });
 
         return mediasPorDisciplina;
     }
+
+
 
     public async Task<bool> AtualizarAlunoAsync(int id, AlunoInput input)
     {
@@ -131,13 +159,11 @@ public class AlunoService
         aluno.Nome = input.Nome;
         aluno.Frequencia = input.Frequencia;
 
-        // Remove as notas antigas
         _db.Notas.RemoveRange(aluno.Notas);
 
-        // Adiciona as novas
         aluno.Notas = input.Notas.Select(n => new Nota
         {
-            Disciplina = n.Disciplina,
+            DisciplinaId = n.DisciplinaId,
             Valor = n.Valor,
             EstudanteId = aluno.Id
         }).ToList();
@@ -145,6 +171,52 @@ public class AlunoService
         await _db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> AtualizarNotasAsync(int id, List<NotaInput> novasNotas)
+    {
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (aluno == null)
+            return false;
+
+        foreach (var novaNota in novasNotas)
+        {
+            _db.Notas.Add(new Nota
+            {
+                EstudanteId = aluno.Id,
+                DisciplinaId = novaNota.DisciplinaId,
+                Valor = novaNota.Valor
+            });
+        }
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<object?> BuscarPorIdAsync(int id)
+    {
+        var aluno = await _db.Estudantes
+            .Include(e => e.Notas)
+                .ThenInclude(n => n.Disciplina)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (aluno is null) return null;
+
+        return new
+        {
+            aluno.Id,
+            aluno.Nome,
+            aluno.Frequencia,
+            Notas = aluno.Notas.Select(n => new
+            {
+                Disciplina = n.Disciplina.Nome,
+                n.Valor
+            })
+        };
+    }
+
     public async Task<bool> DeletarAlunoAsync(int id)
     {
         var aluno = await _db.Estudantes
@@ -160,46 +232,4 @@ public class AlunoService
         await _db.SaveChangesAsync();
         return true;
     }
-    public async Task<object?> BuscarPorIdAsync(int id)
-    {
-        var aluno = await _db.Estudantes
-            .Include(e => e.Notas)
-            .FirstOrDefaultAsync(e => e.Id == id);
-
-        if (aluno is null) return null;
-
-        return new
-        {
-            aluno.Id,
-            aluno.Nome,
-            aluno.Frequencia,
-            Notas = aluno.Notas.Select(n => new { n.Disciplina, n.Valor })
-        };
-    }
-        public async Task<bool> AtualizarNotasAsync(int id, List<NotaInput> novasNotas)
-    {
-        var aluno = await _db.Estudantes
-            .Include(e => e.Notas)
-            .FirstOrDefaultAsync(e => e.Id == id);
-
-        if (aluno == null)
-            return false;
-
-        foreach (var novaNota in novasNotas)
-        {
-            var nota = new Nota
-            {
-                Disciplina = novaNota.Disciplina,
-                Valor = novaNota.Valor,
-                EstudanteId = aluno.Id
-            };
-
-            _db.Notas.Add(nota);
-        }
-
-        await _db.SaveChangesAsync();
-        return true;
-    }
-
-
 }

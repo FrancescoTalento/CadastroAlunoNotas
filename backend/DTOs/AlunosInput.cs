@@ -7,7 +7,7 @@ namespace backend.DTOs
     );
 
     public record NotaInput(
-        string Disciplina,
+        int DisciplinaId,
         decimal Valor
     );
 }
