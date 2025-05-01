@@ -1,8 +1,8 @@
 namespace backend.DTOs;
 
-public record AlunoOutput(
+public record AlunoResumoDto(
     int Id,
     string Nome,
     decimal Frequencia,
-    double Media
+    List<MediaDisciplinaDto> MediasPorDisciplina
 );

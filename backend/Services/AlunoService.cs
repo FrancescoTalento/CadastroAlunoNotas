@@ -14,7 +14,7 @@ public class AlunoService
         _db = db;
     }
 
-    public async Task<AlunoOutput> CriarAlunoAsync(AlunoInput input)
+    public async Task<AlunoResumoDto> CriarAlunoAsync(AlunoInput input)
     {
         var estudante = new Estudante
         {
@@ -30,69 +30,72 @@ public class AlunoService
         _db.Estudantes.Add(estudante);
         await _db.SaveChangesAsync();
 
-        var media = Math.Round(estudante.Notas.Average(n => (double)n.Valor), 2);
 
-        return new AlunoOutput(estudante.Id, estudante.Nome, estudante.Frequencia, media);
+        var alunoComDisciplinas = await _db.Estudantes
+            .Include(e => e.Notas)
+                .ThenInclude(n => n.Disciplina)
+            .FirstOrDefaultAsync(e => e.Id == estudante.Id);
+
+        if (alunoComDisciplinas is null)
+            throw new Exception("Erro ao carregar aluno após cadastro.");
+
+        var medias = alunoComDisciplinas.Notas
+            .GroupBy(n => n.Disciplina.Nome)
+            .Select(g => new MediaDisciplinaDto(
+                g.Key,
+                Math.Round(g.Average(n => (double)n.Valor), 2)
+            ))
+            .ToList();
+
+        return new AlunoResumoDto(
+            alunoComDisciplinas.Id,
+            alunoComDisciplinas.Nome,
+            alunoComDisciplinas.Frequencia,
+            medias
+        );
     }
 
-    public async Task<IEnumerable<object>> BuscarTodosAsync()
+
+        public async Task<IEnumerable<AlunoResumoDto>> BuscarTodosAsync()
     {
         var alunos = await _db.Estudantes
             .Include(e => e.Notas)
                 .ThenInclude(n => n.Disciplina)
             .ToListAsync();
 
-        return alunos.Select(e => new
-        {
+        return alunos.Select(e => new AlunoResumoDto(
             e.Id,
             e.Nome,
             e.Frequencia,
-            MediasPorDisciplina = e.Notas
+            e.Notas
                 .GroupBy(n => n.Disciplina.Nome)
-                .Select(g => new
-                {
-                    Disciplina = g.Key,
-                    Media = Math.Round(g.Average(n => (double)n.Valor), 2)
-                }),
-            Notas = e.Notas.Select(n => new
-            {
-                Disciplina = n.Disciplina.Nome,
-                n.Valor
-            })
-        });
+                .Select(g => new MediaDisciplinaDto(
+                    g.Key,
+                    Math.Round(g.Average(n => (double)n.Valor), 2))
+                ).ToList()
+        ));
     }
 
-    public async Task<IEnumerable<object>> BuscarComFrequenciaBaixaAsync()
+
+
+    public async Task<IEnumerable<AlunoFrequenciaDto>> BuscarComFrequenciaBaixaAsync()
     {
         var alunos = await _db.Estudantes
-            .Include(e => e.Notas)
-                .ThenInclude(n => n.Disciplina)
             .Where(e => e.Frequencia < 75m)
             .ToListAsync();
 
-        return alunos.Select(e => new
-        {
-            e.Id,
-            e.Nome,
-            e.Frequencia,
-            MediaAluno = Math.Round(e.Notas.Any() ? e.Notas.Average(n => (double)n.Valor) : 0, 2),
-            Notas = e.Notas.Select(n => new
-            {
-                Disciplina = n.Disciplina.Nome,
-                n.Valor
-            })
-        });
+        return alunos.Select(e => new AlunoFrequenciaDto(e.Nome, e.Frequencia));
     }
 
-    public async Task<IEnumerable<object>> BuscarAcimaDaMediaAsync()
+
+    public async Task<IEnumerable<AlunoMediaGeralDto>> BuscarAcimaDaMediaAsync()
     {
         var alunos = await _db.Estudantes
             .Include(e => e.Notas)
-                .ThenInclude(n => n.Disciplina)
             .ToListAsync();
 
         if (!alunos.Any() || alunos.All(e => !e.Notas.Any()))
-            return new List<object>();
+            return new List<AlunoMediaGeralDto>();
 
         var mediaTurma = alunos
             .Where(e => e.Notas.Any())
@@ -100,20 +103,12 @@ public class AlunoService
 
         return alunos
             .Where(e => e.Notas.Any() && e.Notas.Average(n => (double)n.Valor) > mediaTurma)
-            .Select(e => new
-            {
-                e.Id,
+            .Select(e => new AlunoMediaGeralDto(
                 e.Nome,
-                e.Frequencia,
-                MediaAluno = Math.Round(e.Notas.Average(n => (double)n.Valor), 2),
-                MediaTurma = Math.Round(mediaTurma, 2),
-                Notas = e.Notas.Select(n => new
-                {
-                    Disciplina = n.Disciplina.Nome,
-                    n.Valor
-                })
-            });
+                Math.Round(e.Notas.Average(n => (double)n.Valor), 2)
+            ));
     }
+
 
    public async Task<IEnumerable<object>> CalcularMediaPorDisciplinaAsync()
     {
