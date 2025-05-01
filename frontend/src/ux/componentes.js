@@ -1,5 +1,19 @@
 import interacoesUx from "./interacoes.js";
 
+
+export function criaListaMediaDisciplinas(medias) {
+  const fragment = document.createDocumentFragment();
+
+  medias.forEach((item) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${item.disciplina}:</strong> ${item.media}`;
+    fragment.appendChild(li);
+  });
+
+  return fragment;
+}
+
+
 export function criaItemAluno(aluno, type = null) {
   const liAluno = document.createElement("li");
 
@@ -18,6 +32,8 @@ export function criaItemAluno(aluno, type = null) {
 }
 
 export function criaTrAluno(aluno) {
+  console.log("Aluno recebido:", aluno);
+
   const tr = document.createElement("tr");
 
   const tdNome = document.createElement("td");

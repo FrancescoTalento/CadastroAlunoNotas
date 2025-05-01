@@ -1,111 +1,96 @@
 import api from "../api.js";
 import ux from "../ux/exibicao.js";
 
-const DISCIPLINAS = [
-  "Matemática",
-  "Português",
-  "História",
-  "Geografia",
-  "Ciências",
-];
+let DISCIPLINAS = [];
+
+export async function inicializarDisciplinas() {
+  DISCIPLINAS = await api.buscaDisciplinas();
+}
 
 
-export function handlerCancelEdicao(event){
+export function handlerCancelEdicao(event) {
   event.preventDefault();
   const sectionEdicaoAluno = document.querySelector("#edicaoAluno");
-  sectionEdicaoAluno.classList.add("hidden")
- 
+  sectionEdicaoAluno.classList.add("hidden");
 }
 
 export async function handleSubmitEdicao(event) {
   event.preventDefault();
 
-  const formularioEdicao = event.target.closest("form");
+  const form = event.target.closest("form");
 
-  const alunoId = formularioEdicao.querySelector("#edit-id").value;
-  const nomeAluno = formularioEdicao.querySelector("#edit-nome").value;
-  const frequenciaAluno = parseFloat(
-    formularioEdicao.querySelector("#edit-frequencia").value
-  );
+  const alunoId = form.querySelector("#edit-id").value;
+  const nome = form.querySelector("#edit-nome").value;
+  const frequencia = parseFloat(form.querySelector("#edit-frequencia").value);
 
-  const notasAtualizadas = [];
+  const notas = [];
 
-  DISCIPLINAS.forEach((disciplina) => {
-    const camposNota = formularioEdicao.querySelectorAll(
-      `.notas-container[data-disc="${disciplina}"] input`
+  DISCIPLINAS.forEach(({ id, nome: nomeDisciplina }) => {
+    const inputs = form.querySelectorAll(
+      `.notas-container[data-disc="${nomeDisciplina}"] input`
     );
 
-    camposNota.forEach((campoNota) => {
-      const valorNota = parseFloat(campoNota.value);
-      if (!isNaN(valorNota)) {
-        notasAtualizadas.push({ disciplina, valor: valorNota });
+    inputs.forEach((input) => {
+      const valor = parseFloat(input.value);
+      if (!isNaN(valor)) {
+        notas.push({ disciplinaId: id, valor });
       }
     });
   });
 
-  const alunoAtualizado = {
-    nome: nomeAluno,
-    frequencia: frequenciaAluno,
-    notas: notasAtualizadas,
-  };
+  const alunoAtualizado = { nome, frequencia, notas };
 
   await api.atualizaAluno(alunoId, alunoAtualizado);
   await ux.mostraTodosAlunos();
 
-  formularioEdicao.reset();
+  form.reset();
   document.querySelector("#edicaoAluno").classList.add("hidden");
 }
 
-
-
-
+// ✅ Preenche o formulário para edição do aluno
 export function preencherFormularioDeEdicao(aluno) {
-  // ‣ Mostra a seção de edição
-  const secaoEdicao = document.querySelector("#edicaoAluno");
-  secaoEdicao.classList.remove("hidden");
+  const secao = document.querySelector("#edicaoAluno");
+  secao.classList.remove("hidden");
 
-  // ‣ Campos fixos (id, nome, frequência)
   const form = document.querySelector("#formularioEdicao");
   form.querySelector("#edit-id").value = aluno.id;
   form.querySelector("#edit-nome").value = aluno.nome;
   form.querySelector("#edit-frequencia").value = aluno.frequencia;
 
-  // ‣ Reorganiza as notas em um objeto { disciplina: [valores...] }
-  const notasPorDisciplina = {};
-  aluno.notas.forEach((nota) => {
-    if (!notasPorDisciplina[nota.disciplina])
-      notasPorDisciplina[nota.disciplina] = [];
-    notasPorDisciplina[nota.disciplina].push(nota.valor);
+  // Agrupa por nome da disciplina
+  const agrupadas = {};
+  aluno.notas.forEach((n) => {
+    if (!agrupadas[n.disciplina]) agrupadas[n.disciplina] = [];
+    agrupadas[n.disciplina].push(n.valor);
   });
 
-  // ‣ Gera dinamicamente os inputs para cada disciplina
-  DISCIPLINAS.forEach((disciplina) => {
+  DISCIPLINAS.forEach(({ nome }) => {
     const container = document.querySelector(
-      `.notas-container[data-disc="${disciplina}"]`
+      `.notas-container[data-disc="${nome}"]`
     );
-    container.innerHTML = ""; // limpa qualquer conteúdo antigo
+    container.innerHTML = "";
 
-    const listaDeNotas = notasPorDisciplina[disciplina] ?? [];
+    const notas = agrupadas[nome] ?? [];
 
-    listaDeNotas.forEach((valor, indice) => {
-      const numeroNota = indice + 1; // para rótulo “Nota 1 …”
+    notas.forEach((valor, i) => {
+      const idx = i + 1;
 
       const grupo = document.createElement("div");
 
-      const rotulo = document.createElement("label");
-      rotulo.htmlFor = `${disciplina}-nota-${numeroNota}`;
-      rotulo.textContent = `Nota ${numeroNota}:`;
+      const label = document.createElement("label");
+      label.htmlFor = `${nome}-nota-${idx}`;
+      label.textContent = `Nota ${idx}:`;
 
       const input = document.createElement("input");
       input.type = "number";
-      input.id = `${disciplina}-nota-${numeroNota}`;
-      input.name = `${disciplina}-nota-${numeroNota}`;
+      input.id = `${nome}-nota-${idx}`;
+      input.name = `${nome}-nota-${idx}`;
       input.min = 0;
       input.max = 10;
       input.step = 0.1;
-      input.value = valor; // valor atual da nota
+      input.value = valor;
 
-      grupo.append(rotulo, input);
+      grupo.append(label, input);
       container.appendChild(grupo);
     });
   });

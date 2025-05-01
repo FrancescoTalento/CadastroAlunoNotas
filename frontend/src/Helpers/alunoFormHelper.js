@@ -1,21 +1,15 @@
 export function obterAlunoDoFormulario() {
   const nome = document.querySelector("#nome").value;
-  const frequencia = document.querySelector("#frequencia").value;
+  const frequencia = parseFloat(document.querySelector("#frequencia").value);
 
-  const notas = [
-    "Matemática",
-    "Português",
-    "História",
-    "Geografia",
-    "Ciências",
-  ].map((disciplina, i) => ({
-    disciplina,
-    valor: document.querySelector(`#nota${i + 1}`).value,
+  const notas = [1, 2, 3, 4, 5].map((disciplinaId, i) => ({
+    disciplinaId,
+    valor: parseFloat(document.querySelector(`#nota${i + 1}`).value),
   }));
 
   return {
-    nome: nome,
-    frequencia: frequencia,
-    notas: notas,
+    nome,
+    frequencia,
+    notas,
   };
 }

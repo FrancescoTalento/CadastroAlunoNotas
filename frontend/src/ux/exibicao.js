@@ -1,13 +1,18 @@
 import api from "../api.js";
-import { criaItemAluno, criaTrAluno } from "./componentes.js";
+import {
+  criaItemAluno,
+  criaTrAluno,
+  criaListaMediaDisciplinas,
+} from "./componentes.js";
 
 const ux = {
   async mostraTodosAlunos() {
-    await this.mostraAlunos()
+    await this.mostraAlunos();
     await this.mostraAlunosComFrequenciaBaixa();
     await this.mostraAlunosAcimaDaMedia();
     await this.mostraMediaTurmaPorDisciplina();
   },
+
   async mostraAlunos() {
     const tBody = document.querySelector("#tabelaAluno");
     const alunos = await api.buscaAlunos();
@@ -28,24 +33,25 @@ const ux = {
     const lista = document.querySelector("#mediaAlta");
     const alunos = await api.buscaAlunosAcimaDaMedia();
     lista.innerHTML = "";
-    alunos.forEach((aluno) => 
-        lista.appendChild(criaItemAluno(aluno,"media")));
-
+    alunos.forEach((aluno) => lista.appendChild(criaItemAluno(aluno, "media")));
   },
 
   async mostraMediaTurmaPorDisciplina() {
-    
     const lista = document.querySelector("#mediaPorDisciplina");
-    const medias = await api.buscaMediaNotasTurma();
-    
+    try {
+      const medias = await api.buscaMediaNotasTurma();
+      lista.innerHTML = "";
 
-    
-    lista.innerHTML = "";
-    medias.forEach((item) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${item.disciplina}:</strong> ${item.media}`;
-      lista.appendChild(li);
-    });
+      if (!Array.isArray(medias) || medias.length === 0) {
+        lista.innerHTML = "";
+        return;
+      }
+
+      lista.appendChild(criaListaMediaDisciplinas(medias));
+    } catch (error) {
+      lista.innerHTML = "<li>Erro ao carregar médias.</li>";
+      console.log(error);
+    }
   },
 };
 
